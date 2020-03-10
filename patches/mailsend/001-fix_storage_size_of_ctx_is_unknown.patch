@@ -1,0 +1,29 @@
+diff -Nur a/utils.c b/utils.c
+--- a/utils.c	2014-05-26 02:24:43.000000000 +0800
++++ b/utils.c	2020-03-06 17:09:32.380106124 +0800
+@@ -791,8 +791,7 @@
+     unsigned char
+         hmac_md5[16];
+ 
+-    HMAC_CTX
+-        ctx;
++    HMAC_CTX *ctx;
+ 
+     const EVP_MD
+         *md5=NULL;
+@@ -832,10 +831,11 @@
+ 
+     /* take HMAC-MD5 of the challenge*/
+     md5=EVP_get_digestbyname("md5");
+-    HMAC_CTX_init(&ctx);
+-    HMAC_Init(&ctx,secret,strlen(secret),md5);
+-    HMAC_Update(&ctx,data,data_len);
+-    HMAC_Final(&ctx,hmac_md5,&hmac_len);
++    ctx=HMAC_CTX_new();
++    HMAC_Init(ctx,secret,strlen(secret),md5);
++    HMAC_Update(ctx,data,data_len);
++    HMAC_Final(ctx,hmac_md5,&hmac_len);
++	HMAC_CTX_free(ctx);
+ 
+     /* convert the digest to hex */
+     memset(hex,0,sizeof(hex));
